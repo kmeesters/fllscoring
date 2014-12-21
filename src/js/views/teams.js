@@ -1,6 +1,7 @@
 define('views/teams',[
     'services/log',
     'services/ng-teams',
+    'services/ng-remotehost',
     'angular'
 ], function(log) {
     var moduleName = 'teams';
@@ -8,8 +9,8 @@ define('views/teams',[
     return angular.module(moduleName, []).config(['$httpProvider', function($httpProvider) {
             delete $httpProvider.defaults.headers.common["X-Requested-With"];
         }]).controller(moduleName + 'Ctrl', [
-        '$scope','$http','$q','$teams',
-        function($scope,$http,$q,$teams) {
+        '$scope','$http','$q','$teams','$remotehost',
+        function($scope,$http,$q,$teams,$remotehost) {
 
             log('init teams ctrl');
             $scope.log = log.get();
@@ -36,28 +37,17 @@ define('views/teams',[
             };
             $scope.init();
 
+            //TODO: extract to service
             $scope.load = function() {
-                var url = 'http://fll.mobilesorcery.nl/api/public/teams/';
-                return $http.get(url).success(function(res) {
+                return $remotehost.read('teams.json').then(function(res) {
                     $teams.clear();
                     res.forEach(function(team) {
-                        $teams.add({
-                            number: team.id,
-                            name: team.name,
-                            affiliation: team.affiliation,
-                            cityState: team.cityState,
-                            country: team.country,
-                            coach1: team.coach1,
-                            coach2: team.coach2,
-                            judgingGroup: team.judgingGroup,
-                            pitLocation: team.pitLocation,
-                            translationNeeded: team.translationNeeded
-                        });
+                        $teams.add(team);
                     });
                     return $scope.saveTeams().then(function() {
                         log('successfully retrieved and saved teams');
                     });
-                }).error(function() {
+                }).catch(function() {
                     log('failed retrieving teams');
                 });
             };

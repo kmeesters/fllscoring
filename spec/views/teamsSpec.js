@@ -4,7 +4,7 @@ describe('teams', function() {
         'services/log': logMock
     });
 
-    var $scope, controller, $httpBackend, $teams;
+    var $scope, controller, $httpBackend, $teams, $q, $remotehost;
     var mockTeam = {
         name: 'foo',
         number: 123,
@@ -33,17 +33,21 @@ describe('teams', function() {
 
     beforeEach(function() {
         angular.mock.module(module.name);
-        angular.mock.inject(function($controller, $rootScope, _$httpBackend_) {
+        angular.mock.inject(function($controller, $rootScope, _$httpBackend_,_$q_) {
             $scope = $rootScope.$new();
             $httpBackend = _$httpBackend_;
+            $q = _$q_;
             $httpBackend.when('GET','http://fll.mobilesorcery.nl/api/public/teams/')
             .respond([
                 mockRemoteTeam
             ]);
             $teams = createTeamsMock([mockTeam]);
+            $remotehost = createRemotehostMock($q);
+
             controller = $controller('teamsCtrl', {
                 '$scope': $scope,
-                '$teams': $teams
+                '$teams': $teams,
+                '$remotehost': $remotehost
             });
         });
         return $scope.init();
@@ -52,7 +56,7 @@ describe('teams', function() {
     beforeEach(function() {
         //spy setPage method;
         $scope.setPage = jasmine.createSpy('setPage');
-    })
+    });
 
     describe('initialization', function() {
         it('should initialize', function() {
@@ -70,7 +74,7 @@ describe('teams', function() {
             // been done by an earlier beforeEach() call.
             // So, the teams have already been loaded.
             $teams.teams = [];
-        })
+        });
         it('should initialize in editmode when no teams found on storage', function() {
             expect($scope.teams).toEqual([]);
             expect($scope.newTeam).toEqual({});
@@ -80,11 +84,18 @@ describe('teams', function() {
 
     describe('load', function() {
         it('should call the web service for new teams',function() {
+            var teams = [mockTeam];
+            $remotehost.read.andReturn($q.when(teams));
+            $scope.saveTeams = jasmine.createSpy('saveTeamsSpy').andReturn($q.when());
+
             $scope.load();
-            $scope.saveTeams = jasmine.createSpy('saveTeamsSpy').andReturn(Q.when());
-            $httpBackend.flush();
+            $scope.$digest();
+
+            expect($teams.clear).toHaveBeenCalled();
+            expect($teams.add).toHaveBeenCalledWith(mockTeam);
+            expect($remotehost.read).toHaveBeenCalledWith('teams.json');
             expect($scope.saveTeams).toHaveBeenCalled();
-            expect($scope.teams).toEqual([mockTeam])
+            expect($scope.teams).toEqual([mockTeam]);
         });
     });
 

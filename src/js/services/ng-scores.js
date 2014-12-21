@@ -6,7 +6,8 @@ define('services/ng-scores',[
     'services/ng-services',
     'services/log',
     'services/ng-fs',
-    'services/ng-stages'
+    'services/ng-stages',
+    'services/ng-remotehost',
 ],function(module,log) {
     "use strict";
 
@@ -15,8 +16,8 @@ define('services/ng-scores',[
     var SCORES_VERSION = 2;
 
     return module.service('$scores',
-        ['$rootScope', '$fs', '$stages', '$q', '$teams',
-        function($rootScope, $fs, $stages, $q, $teams) {
+        ['$rootScope', '$fs', '$stages', '$q', '$teams', '$remotehost',
+        function($rootScope, $fs, $stages, $q, $teams, $remotehost) {
 
         // Replace placeholders in format string.
         // Example: format("Frobnicate {0} {1} {2}", "foo", "bar")
@@ -337,7 +338,7 @@ define('services/ng-scores',[
          */
         Scores.prototype.pollSheets = function() {
             var self = this;
-            return $fs.list("scoresheets/").catch(function(err) {
+            return $remotehost.list("scoresheets/").catch(function(err) {
                 // Ignore the fact that there are no sheets at all yet
                 if (err.status === 404) {
                     return [];
@@ -363,7 +364,7 @@ define('services/ng-scores',[
                         return;
                     }
                     // Retrieve the new sheet
-                    var p = $fs.read("scoresheets/" + filename).then(function(sheet) {
+                    var p = $remotehost.read("scoresheets/" + filename).then(function(sheet) {
                         // Convert to score entry and add to list
                         var score = {
                             file: filename,

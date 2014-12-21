@@ -1,5 +1,3 @@
-"use strict";
-
 describe('ng-scores',function() {
     var ngServices = factory('services/ng-services');
     var module = factory('services/ng-scores',{
@@ -10,6 +8,7 @@ describe('ng-scores',function() {
     var $scores;
     var $stages;
     var $teams;
+    var $q;
     var dummyTeam =  {
         number: 123,
         name: 'foo'
@@ -27,6 +26,7 @@ describe('ng-scores',function() {
     var mockScore;
     var mockTeam;
     var fsMock;
+    var remotehostMock;
 
     beforeEach(function() {
         fsMock = createFsMock({
@@ -34,15 +34,21 @@ describe('ng-scores',function() {
             "stages.json": [rawMockStage],
             "teams.json": [dummyTeam]
         });
+        remotehostMock = createRemotehostMock(Q);
         angular.mock.module(module.name);
         angular.mock.module(function($provide) {
             $provide.value('$fs', fsMock);
+            $provide.value('$remotehost',remotehostMock);
         });
-        angular.mock.inject(["$scores", "$stages", "$teams", function(_$scores_, _$stages_, _$teams_) {
-            $scores = _$scores_;
-            $stages = _$stages_;
-            $teams = _$teams_;
-        }]);
+        angular.mock.inject([
+            "$scores", "$stages", "$teams",'$q',
+            function(_$scores_, _$stages_, _$teams_,_$q_) {
+                $scores = _$scores_;
+                $stages = _$stages_;
+                $teams = _$teams_;
+                $q = _$q_;
+            }
+        ]);
 
         return $stages.init().then(function() {
             mockStage = $stages.get(rawMockStage.id);
@@ -316,7 +322,7 @@ describe('ng-scores',function() {
             ], true);
             $scores.scores.forEach(function(score) {
                 expect(score.error).toBeInstanceOf($scores.InvalidScoreError);
-            })
+            });
             expect(board["test"].length).toEqual(0);
             expect($scores.validationErrors.length).toEqual(6);
         });
@@ -351,7 +357,7 @@ describe('ng-scores',function() {
         });
     });
 
-    describe("pollSheets", function() {
+    xdescribe("pollSheets", function() {
         var importedScore;
         var mockFiles;
         var mockDirs;
