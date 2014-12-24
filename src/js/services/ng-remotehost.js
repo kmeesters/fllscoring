@@ -33,14 +33,6 @@ define('services/ng-remotehost',[
                             return response.data;
                         });
                     });
-                },
-                list: function(path) {
-                    return $settings.init().then(function(settings) {
-                        var url = (settings.host||host)+'fs/'+path;
-                        return $http.get(url).then(function(response) {
-                            return response.data;
-                        });
-                    });
                 }
             };
         }

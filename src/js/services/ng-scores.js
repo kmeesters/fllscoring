@@ -338,7 +338,7 @@ define('services/ng-scores',[
          */
         Scores.prototype.pollSheets = function() {
             var self = this;
-            return $remotehost.list("scoresheets/").catch(function(err) {
+            return $remotehost.read("scoresheets/").catch(function(err) {
                 // Ignore the fact that there are no sheets at all yet
                 if (err.status === 404) {
                     return [];
