@@ -71,7 +71,7 @@ app.get(/^\/fs\/(.*)$/, function(req, res) {
                     res.status(500).send('invalid filename(s)');
                     return;
                 }
-                res.send(filenames.join('\n'));
+                res.jsonp(filenames);
             });
         } else {
             res.status(500).send('error reading file');

@@ -37,10 +37,8 @@ define('services/ng-remotehost',[
                 list: function(path) {
                     return $settings.init().then(function(settings) {
                         var url = (settings.host||host)+'fs/'+path;
-                        return $http.get(url,{
-                            transformResponse: function(d) {return d;}
-                        }).then(function(response) {
-                            return response.data.split("\n");
+                        return $http.get(url).then(function(response) {
+                            return response.data;
                         });
                     });
                 }
