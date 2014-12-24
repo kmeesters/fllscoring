@@ -31,12 +31,12 @@ define('services/ng-challenge',[
                     //use non-angular fs to load plain javascript instead of json
                     return fs.read(challenge).then(function(defs) {
                         return self.init(eval('('+defs+')'));
-                    }).fail(function() {
+                    }).catch(function() {
                         //get from remote service
                         return $remotehost.readChallenge(fallBackChallenge).then(function(challenge) {
                             return self.init(challenge);
                         });
-                    }).fail(function() {
+                    }).catch(function() {
                         log('error getting field');
                     });
                 },

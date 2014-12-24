@@ -4,7 +4,7 @@ describe('ng-challenge',function() {
 
     var dummyChallenge = {foo:'bar'};
 
-    var fsMock, settingsMock, remotehostMock,$q;
+    var fsMock, settingsMock, remotehostMock,$q,$rootScope;
     fsMock = createFsMock({'foo': JSON.stringify(dummyChallenge)});
 
     var module = factory('services/ng-challenge',{
@@ -12,19 +12,22 @@ describe('ng-challenge',function() {
         'services/fs': fsMock
     });
 
-
     beforeEach(function() {
-        settingsMock = createSettingsMock({});
-        remotehostMock = createRemotehostMock(Q);
-
-        angular.mock.module(function($provide) {
-            $provide.value('$settings', settingsMock);
-            $provide.value('$remotehost', remotehostMock);
-        });
         angular.mock.module(module.name);
-        angular.mock.inject(function($challenge,_$q_) {
+        angular.mock.module(function($provide) {
+            $provide.service('$settings', function($q) {
+                settingsMock = createSettingsMock({});
+                return settingsMock;
+            });
+            $provide.service('$remotehost', function($q) {
+                remotehostMock = createRemotehostMock($q);
+                return remotehostMock;
+            });
+        });
+        angular.mock.inject(function($challenge,_$q_,_$rootScope_) {
             challenge = $challenge;
             $q = _$q_;
+            $rootScope = _$rootScope_;
         });
     });
 
@@ -47,18 +50,18 @@ describe('ng-challenge',function() {
                 expect(challenge.init).toHaveBeenCalledWith(dummyChallenge);
                 done();
             });
+            $rootScope.$digest();
         });
 
-        it('when failing, it should load from remote, then init',function(done) {
-            fsMock.read.andReturn(Q.reject());
-            remotehostMock.readChallenge.andReturn(Q.when(dummyChallenge));
+        it('when failing, it should load from remote, then init',function() {
+            fsMock.read.andReturn($q.reject());
+            remotehostMock.readChallenge.andReturn($q.when(dummyChallenge));
             challenge.init = jasmine.createSpy('init').andReturn(42);
             challenge.load('bar').then(function() {
                 expect(remotehostMock.readChallenge).toHaveBeenCalled();
                 expect(challenge.init).toHaveBeenCalledWith(dummyChallenge);
-                done();
-            },done);
-
+            });
+            $rootScope.$digest();
         });
     });
 
