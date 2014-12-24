@@ -16,7 +16,7 @@ describe('ng-challenge',function() {
         angular.mock.module(module.name);
         angular.mock.module(function($provide) {
             $provide.service('$settings', function($q) {
-                settingsMock = createSettingsMock({});
+                settingsMock = createSettingsMock($q, {});
                 return settingsMock;
             });
             $provide.service('$remotehost', function($q) {
