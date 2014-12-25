@@ -9,6 +9,7 @@ describe('ng-challenge',function() {
 
     var module = factory('services/ng-challenge',{
         'services/ng-services': ngServices,
+        'services/log': logMock,
         'services/fs': fsMock
     });
 
@@ -60,6 +61,15 @@ describe('ng-challenge',function() {
             challenge.load('bar').then(function() {
                 expect(remotehostMock.readChallenge).toHaveBeenCalled();
                 expect(challenge.init).toHaveBeenCalledWith(dummyChallenge);
+            });
+            $rootScope.$digest();
+        });
+
+        it('when failing from remote, it should log an error',function() {
+            fsMock.read.andReturn($q.reject());
+            remotehostMock.readChallenge.andReturn($q.reject('aargh'));
+            challenge.load('bar').then(function() {
+                expect(logMock).toHaveBeenCalledWith('error getting field');
             });
             $rootScope.$digest();
         });
