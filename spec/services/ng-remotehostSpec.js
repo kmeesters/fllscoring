@@ -43,4 +43,12 @@ describe('ng-remotehost',function() {
         });
     });
 
+    describe('write',function() {
+        it('should write to the filesystem of the remote host',function() {
+            $httpBackend.expectPOST('http://localhost:1390/fs/foo',[1,2,3]).respond(201);
+            $remotehost.write('foo',[1,2,3]);
+            $httpBackend.flush();
+        });
+    });
+
 });
