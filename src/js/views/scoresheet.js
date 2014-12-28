@@ -7,6 +7,7 @@ define('views/scoresheet',[
     'services/ng-teams',
     'services/ng-stages',
     'services/ng-settings',
+    'services/ng-remotehost',
     'directives/sigpad',
     'directives/spinner',
     'angular'
@@ -14,8 +15,8 @@ define('views/scoresheet',[
     var moduleName = 'scoresheet';
 
     return angular.module(moduleName, []).controller(moduleName + 'Ctrl', [
-        '$scope','$fs','$stages','$settings','$modal','$challenge','$window','$q','$teams',
-        function($scope,$fs,$stages,$settings,$modal,$challenge,$window,$q,$teams) {
+        '$scope','$fs','$stages','$settings','$modal','$challenge','$window','$q','$teams','$remotehost',
+        function($scope,$fs,$stages,$settings,$modal,$challenge,$window,$q,$teams,$remotehost) {
             log('init scoresheet ctrl');
 
             // Set up defaults
@@ -155,6 +156,26 @@ define('views/scoresheet',[
                 console.log('discard');
             };
 
+            function saveLocal(fn,data) {
+                return $fs.write("scoresheets/" + fn,data).then(function() {
+                    log('result saved');
+                    $scope.discard();
+                    alert('Thanks for submitting a score of ' +
+                        data.score +
+                        ' points for team ( ' + data.team.number + ' ) ' + data.team.name +
+                        ' in ' + data.stage.name + ' ' + data.round + '.'
+                    );
+                },function() {
+                    alert('unable to write result');
+                });
+            }
+
+            function saveRemote(fn,data) {
+                return $remotehost.write("scoresheets/" + fn,data).then(function() {
+                    log('result saved to remote host');
+                });
+            }
+
             //saves mission scoresheet
             //take into account a key: https://github.com/FirstLegoLeague/fllscoring/issues/5#issuecomment-26030045
             $scope.save = function() {
@@ -178,17 +199,10 @@ define('views/scoresheet',[
                 data.signature = $scope.signature;
                 data.score = $scope.score();
 
-                return $fs.write("scoresheets/" + fn,data).then(function() {
-                    log('result saved');
-                    $scope.discard();
-                    alert('Thanks for submitting a score of ' +
-                        data.score +
-                        ' points for team ( ' + data.team.number + ' ) ' + data.team.name +
-                        ' in ' + data.stage.name + ' ' + data.round + '.'
-                    );
-                },function() {
-                    alert('unable to write result');
-                });
+                return $q.all([
+                    saveLocal(fn,data),
+                    saveRemote(fn,data)
+                ]);
             };
 
             /* Methods used by Modal windows */
