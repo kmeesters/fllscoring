@@ -390,9 +390,9 @@ describe('ng-scores',function() {
         });
     });
 
-    xdescribe("pollSheets", function() {
+    describe("pollSheets", function() {
         var importedScore;
-        var mockFiles;
+        var mockPaths;
         var mockDirs;
 
         beforeEach(function() {
@@ -404,16 +404,17 @@ describe('ng-scores',function() {
                 score: 456,
                 originalScore: 456
             };
-            mockFiles = {
+            mockPaths = {
                 "scores.json": { version: 2, scores: [], sheets: [] },
-                "scoresheets/sheet_1.json": { teamNumber: 123, stageId: "test", round: 1, score: 456 }
+                "scoresheets/sheet_1.json": { teamNumber: 123, stageId: "test", round: 1, score: 456 },
+                "scoresheets/": ["sheet_1.json"]
             };
-            mockDirs = {
-                "scoresheets": ["sheet_1.json"],
-            };
-            fsMock._setFiles(mockFiles);
+            fsMock._setFiles(mockPaths);
             fsMock._setDirs(mockDirs);
             $scores.clear();
+            remotehostMock.read.andCallFake(function(path) {
+                return $q.when(mockPaths[path]);
+            });
         });
 
         it("should pick up a new sheet", function() {
@@ -432,7 +433,7 @@ describe('ng-scores',function() {
         });
 
         it("should ignore already processed sheets across loads", function() {
-            mockFiles["scores.json"] = { version: 2, scores: [], sheets: ["sheet_1.json"] };
+            mockPaths["scores.json"] = { version: 2, scores: [], sheets: ["sheet_1.json"] };
             return $scores.load().then(function() {
                 return $scores.pollSheets();
             }).then(function() {
@@ -462,7 +463,7 @@ describe('ng-scores',function() {
 
         describe('error recovery',function() {
             it('should continue with no sheets when a 404 is returned',function() {
-                fsMock.list.andReturn(Q.reject({status:404}));
+                remotehostMock.read.andReturn(Q.reject({status:404}));
                 $scores.save = jasmine.createSpy('save');
                 return $scores.pollSheets().then(function() {
                     expect(fsMock.write).not.toHaveBeenCalled();
@@ -471,21 +472,21 @@ describe('ng-scores',function() {
             });
 
             it('throw an error if an http error is received',function() {
-                fsMock.list.andReturn(Q.reject({status:500,responseText:'server error',statusText:'foo'}));
+                remotehostMock.read.andReturn(Q.reject({status:500,responseText:'server error',statusText:'foo'}));
                 return $scores.pollSheets().catch(function(err) {
                     expect(err.message).toEqual('error 500 (foo): server error');
                 });
             });
 
             it('should rethrow the error if something just goes wrong',function() {
-                fsMock.list.andReturn(Q.reject(new Error('squeek')));
+                remotehostMock.read.andReturn(Q.reject(new Error('squeek')));
                 return $scores.pollSheets().catch(function(err) {
                     expect(err.message).toEqual('squeek');
                 });
             });
 
             it('should throw an unknown error if strange stuff is returned',function() {
-                fsMock.list.andReturn(Q.reject('darn'));
+                remotehostMock.read.andReturn(Q.reject('darn'));
                 return $scores.pollSheets().catch(function(err) {
                     expect(err.message).toEqual('unknown error: darn');
                 });
