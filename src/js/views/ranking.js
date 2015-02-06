@@ -33,8 +33,8 @@ define('views/ranking',[
                     } else {
                         icon = 'icon-sort-up';
                     }
-                } else if (stage.sort == null && col == $scope.sort) {
-                    if (stage.rev == null && $scope.rev) {
+                } else if (stage.sort === undefined && col == $scope.sort) {
+                    if (stage.rev === undefined && $scope.rev) {
                         icon = 'icon-sort-down';
                     } else {
                         icon = 'icon-sort-up';
@@ -51,12 +51,12 @@ define('views/ranking',[
 
             $scope.maxRounds = function() {
                 return $stages.stages.reduce(function(max,stage) {
-                    //log(stage.name + ": " + stage.$rounds.length);
-                    //log("maxRounds: " + max);
                     return Math.max(max, stage.$rounds.length);
                 },0);
             };
 
+            //return an array with the number of empty columns to render for a stage
+            //max rounds minus stage rounds
             $scope.emptyCols = function(stage) {
                 return new Array($scope.maxRounds() - stage.$rounds.length);
             };
@@ -105,7 +105,7 @@ define('views/ranking',[
                     $scope.csvname[stageId] = encodeURIComponent("ranking_" + stageId + ".csv");
                     $scope.csvdata[stageId] = "data:text/csv;charset=utf-8," + encodeURIComponent(toCSV(rows));
                 });
-            }
+            };
 
             // Rebuild CSV data and filenames when scoreboard is updated
             $scope.$watch("scoreboard", function() {
