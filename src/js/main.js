@@ -1,6 +1,7 @@
 define([
     'services/log',
-    'views/settings',
+    'views/setupWizard',
+	'views/settings',
     'views/teams',
     'views/scoresheet',
     'views/scores',
@@ -16,7 +17,7 @@ define([
     'angular-touch',
     'angular-sanitize',
     'angular'
-],function(log,settings,teams,scoresheet,scores,ranking,services,directives,size,filters,indexFilter,fsTest,dbTest) {
+],function(log,setupWizard,settings,teams,scoresheet,scores,ranking,services,directives,size,filters,indexFilter,fsTest,dbTest) {
 
     log('device ready');
 
@@ -31,9 +32,9 @@ define([
             log('init main ctrl');
             $scope.mainView = 'views/main.html';
             $scope.scoringView = 'views/mainScoring.html';
-            $scope.pages = ['teams','scoresheet','scores','ranking','settings'];
+            $scope.pages = ['setupWizard','teams','scoresheet','scores','ranking','settings'];
             $scope.scoringPages = ['scoresheet','settings'];
-            $scope.currentPage = $scope.pages[1];
+            $scope.currentPage = $scope.pages[0];
             $scope.validationErrors = [];
             $scope.drawerVisible = false;
 
@@ -82,7 +83,8 @@ define([
         'ui.bootstrap',
         'ngSanitize',
         'ngTouch',
-        settings.name,
+        setupWizard.name,
+		settings.name,
         teams.name,
         scoresheet.name,
         scores.name,

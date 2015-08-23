@@ -1,0 +1,36 @@
+
+<p class="pull-right">
+            <button class="btn" ng-click="CreateStage()">
+                <i class="icon-plus-sign-alt"></i>
+                Add new stage
+            </button>
+        </p>
+        <h1 ng-repeat-start="stage in stages" ng-if="stages">{{stage.name}}</h1>
+        <table class="table table-hover table-bordered table-striped table-teams smallLayoutHide mediumLayoutHide">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Scores</th>
+                    <th>Order</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="round in stage.$rounds">
+                    <td>{{round.name}}</td>
+                    <td>{{round.scores}}</td>
+                    <td>
+                        <div class="icon-chevron-sign-down"/>
+                        <div class="icon-chevron-sign-up"/>
+                    </td>
+                    <td>Delete</td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="pull-right" >
+            <button class="btn" ng-click="CreateRound(stage)">
+                <i class="icon-plus-sign-alt"></i>
+                Add new round
+            </button>
+        </p>
+        <hr ng-repeat-end style="clear: both;"/>

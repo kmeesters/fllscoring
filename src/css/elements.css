@@ -190,6 +190,7 @@ table {
     .viewMain.scoresheet .view-scoresheet,
     .viewMain.scores .view-scores,
     .viewMain.ranking .view-ranking,
+	.viewMain.setupWizard .view-setupWizard,
     .viewMain.settings .view-settings {
         display: block;
     }
@@ -234,6 +235,7 @@ table {
     .viewMain.scoresheet .view-scoresheet,
     .viewMain.scores .view-scores,
     .viewMain.ranking .view-ranking,
+	.viewMain.setupWizard .view-setupWizard,
     .viewMain.settings .view-settings {
         display: block;
     }
@@ -286,6 +288,7 @@ table {
     .viewMain.scoresheet .view-scoresheet,
     .viewMain.scores .view-scores,
     .viewMain.ranking .view-ranking,
+	.viewMain.setupWizard .view-setupWizard,
     .viewMain.settings .view-settings {
         display: block;
     }

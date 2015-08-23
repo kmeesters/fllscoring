@@ -1,0 +1,88 @@
+	
+<div ng-controller="setupWizardCtrl">
+
+    <ul class="nav nav-tabs nav-justified" role="tablist">
+		<li role="Welcome" ng-class="{active:tab===1}"><a><i class="icon-ok" ng-if="tab > 1"></i> Welcome</a></li>
+        <li role="Tournament info" ng-class="{active:tab===2}"><a><i class="icon-ok" ng-if="tab > 2"></i> Tournament info</a></li>
+        <li role="Teams" ng-class="{active:tab===3}"><a><i class="icon-ok" ng-if="tab > 3"></i> Teams</a></li>
+        <li role="Rounds" ng-class="{active:tab===4}"><a><i class="icon-ok" ng-if="tab > 4"></i> Rounds</a></li>
+        <li role="Tables" ng-class="{active:tab===5}"><a><i class="icon-ok" ng-if="tab > 5"></i> Tables</a></li>
+		<li role="Referees" ng-class="{active:tab===6}"><a><i class="icon-ok" ng-if="tab > 6"></i> Referees</a></li>
+		<li role="Summary" ng-class="{active:tab===7}"><a> Summary</a></li>
+    </ul>
+
+	<div ng-show="tab === 1">
+		<h1> Welcome </h1>
+		<p>@Kenny todo </p>
+		<button ng-click="tab=2">Start</button>
+    </div>
+    <div ng-show="tab === 2">
+		<h1> Tournament information </h1>
+	
+		<p>
+            <label for="">Event name: </label>
+            <input type="text" ng-model="settings.event.name" />
+            Name your event!
+        </p>
+		<p>
+            <label for="">Date: </label>
+            <input type="date" ng-model="settings.event.date" />
+        </p>
+		<p>
+            <label for="">City: </label>
+            <input type="text" ng-model="settings.event.city" />
+        </p>
+		<p>
+            <label for="">State: </label>
+            <input type="text" ng-model="settings.event.state" />
+        </p>
+		<p>
+            <label for="">Country: </label>
+            <input type="text" ng-model="settings.event.country" />
+        </p>
+		<p>
+            <label for="">Organizer: </label>
+            <input type="text" ng-model="settings.event.organizer" />
+            Name of the organization
+        </p>
+		<p>
+            <label for="">Admin code: </label>
+            <input type="text" ng-model="settings.admincode" />
+            Unique key to secure the application
+        </p>
+		<p>
+            <label for="">Referee code: </label>
+            <input type="text" ng-model="settings.refereecode" />
+            Shared key for your referees to connect to this app
+        </p>
+	
+
+    </div>
+    <div ng-show="tab === 3">
+		<div ng-include="'views/teams.html'"></div>
+    </div>
+    <div ng-show="tab === 4">
+		<div ng-include="'views/includes/roundsConfig.html'"></div>
+	
+    </div>
+	
+    <div ng-show="tab === 5">
+		<h1> Tables </h1>
+ 
+    </div>
+	<div ng-show="tab === 6">
+		<h1> Referees </h1>
+	
+    </div>
+	
+	<div ng-show="tab === 7">
+		<h1> Summary </h1>
+		@Todo Kenny: Show IP address and keys here
+		<button>Cancel</button>
+		<button>Finish</button>
+    </div>
+
+	<button ng-click="tab=tab-1" ng-show="showPrev(tab)"><i class="icon-step-backward"></i> Prev  </button>
+	<button ng-click="tab=tab+1; save()" ng-show="showNext(tab)"><i class="icon-step-forward"></i> Save & Next  </button>
+	
+</div>
