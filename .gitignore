@@ -1,6 +1,7 @@
 node_modules/
 coverage/
-webkitbuilds/
+nw-builds/
+nw-cache/
 temp/
 pgbuildconfig.json
 .cordova/config.json
@@ -22,9 +23,6 @@ src/components/*/*
 !src/components/bootstrap-css/css
 !src/components/bootstrap-css/img
 !src/components/bootstrap-css/js
-
-!src/components/font-awesome/css
-!src/components/font-awesome/font
 
 !src/components/idbwrapper/idbstore*.js
 

@@ -1,11 +1,31 @@
 <div ng-controller="rankingCtrl">
+    <div class="appbar">
+        <button ng-click="toggleDrawer()">
+            <i class="material-icons">menu</i>
+        </button>
+        <h1>
+            {{currentPage}}
+        </h1>
+        <span class="appbar-actions">
+            <button ng-click="exportRanking()"><i class="material-icons">file_download</i></button>
+        </span>
+    </div>
+
     <div ng-repeat="stage in stages">
-        <a class="pull-right" style="margin-top: 1em;" href="{{csvdata[stage.id]}}" download="{{csvname[stage.id]}}"><i class="icon-download-alt"></i> Export</a>
+        <p class="pull-right" style="margin-top: 1em;">
+            <a  href="{{csvdata[stage.id]}}" download="{{csvname[stage.id]}}">
+                <i class="material-icons">file_download</i>
+                Export
+            </a>
+            <a ng-click="broadcastRanking(stage)">
+                <i class="material-icons">publish</i>
+                Broadcast
+            </a>
+        </p>
         <h1 ng-if="stage.rounds > 0">
-            <span class="icon" style="cursor: pointer;" ng-class="{
-                'icon-caret-down':!stage.$collapsed,
-                'icon-caret-right':stage.$collapsed
-            }" ng-click="toggle(stage)"></span>
+
+            <span class="material-icons clickable" ng-click="toggle(stage)" ng-if="stage.$collapsed">keyboard_arrow_down</span>
+            <span class="material-icons clickable" ng-click="toggle(stage)" ng-if="!stage.$collapsed">keyboard_arrow_up</span>
             {{stage.name}}
             <span ng-if="scoreboard[stage.id].length > 0"
                 style="margin-left: 1em">
@@ -65,3 +85,5 @@
         </div>
     </div>
 </div>
+
+

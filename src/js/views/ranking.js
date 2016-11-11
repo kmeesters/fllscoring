@@ -3,17 +3,45 @@
 define('views/ranking',[
     'services/log',
     'services/ng-scores',
+    'services/ng-handshake',
+    'services/ng-message',
+    'controllers/ExportRankingDialogController',
     'angular'
 ],function(log) {
     var moduleName = 'ranking';
-    return angular.module(moduleName,[]).controller(moduleName+'Ctrl', [
-        '$scope', '$scores', '$stages',
-        function($scope, $scores, $stages) {
+    return angular.module(moduleName,['ExportRankingDialog']).controller(moduleName+'Ctrl', [
+        '$scope', '$scores', '$stages','$handshake','$message',
+        function($scope, $scores, $stages, $handshake, $message) {
             log('init ranking ctrl');
 
             // temporary default sort values
             $scope.sort = 'rank';
             $scope.rev = false;
+
+            $scope.scores = $scores;
+
+            $scope.exportRanking = function() {
+                $handshake.$emit('exportRanking',{
+                    scores: $scope.scores,
+                    stages: $scope.stages
+                });
+            };
+
+            //TODO: this is a very specific message tailored to display system.
+            //we want less contract here
+            $scope.broadcastRanking = function(stage) {
+                var data = {
+                    data: $scope.scoreboard[stage.id].map(function(item) {
+                        return [
+                            item.rank,
+                            item.team.name,
+                            item.highest
+                        ];
+                    }),
+                    header: stage.name
+                };
+                $message.send('list:setArray',data);
+            };
 
             $scope.doSort = function(stage, col, defaultSort) {
                 if (stage.sort === undefined) {
@@ -114,6 +142,12 @@ define('views/ranking',[
 
             $scope.stages = $stages.stages;
             $scope.scoreboard = $scores.scoreboard;
+
+            $scope.getRoundLabel = function(round){
+                return "Round " + round;
+            };
+            
+
         }
     ]);
 });

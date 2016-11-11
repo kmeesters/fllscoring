@@ -7,6 +7,7 @@ html,body {
 body {
     font-family: 'latolight', 'Segoe UI','helvetica','Arial';
     font-size: 18px;
+    background-color: white;
 }
 
 h1 {
@@ -73,7 +74,7 @@ table {
         background-color: dodgerblue;
         padding-left: 4px;
         box-shadow: 0 2px 5px rgba(0,0,0,0.26);
-        z-index: 1998;
+        z-index: 1990;
     }
     .appbar button {
         height: 48px;
@@ -92,6 +93,11 @@ table {
         display: inline-block;
         color: white;
         text-transform: capitalize;
+    }
+    .appbar .appbar-actions {
+        position: absolute;
+        top: 6px;
+        right: 8px;
     }
 }
 
@@ -158,9 +164,30 @@ table {
     }
     .drawer .nav li i {
         width: 24px;
-        margin-right: 32px;
+        margin-right: 16px;
         display: inline-block;
         width: 20px;
+        font-size: 24px;
+    }
+}
+
+/* material design icons */
+.material-icons {
+    vertical-align: text-bottom;
+    font-size: inherit;
+}
+button .material-icons {
+}
+
+/* main view */
+@media screen {
+    .viewMain {
+        overflow: hidden;
+        padding-top: 16px;
+    }
+    /* backgrounds */
+    .viewMain.scoresheet {
+        background-color: #FAFAFA;
     }
 }
 
@@ -226,7 +253,6 @@ table {
         overflow: hidden;
     }
     .viewMain > div {
-        background-color: white;
         display: none;
         padding-bottom: 40px;
     }
@@ -279,7 +305,6 @@ table {
         overflow: hidden;
     }
     .viewMain > div {
-        background-color: white;
         padding: 0 10px;
         display: none;
         padding-bottom: 40px;
